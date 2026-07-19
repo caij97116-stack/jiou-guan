@@ -6,7 +6,8 @@
         'character-card': CharacterCardGenerator,
         'world-info': WorldInfoGenerator,
         theme: ThemeGenerator,
-        'quick-reply': QuickReplyGenerator
+        'quick-reply': QuickReplyGenerator,
+        'regex-tool': RegexToolGenerator
     };
 
     let currentType = 'extension';
@@ -49,7 +50,8 @@
             'character-card': '角色卡 Character Card',
             'world-info': '世界书 World Info',
             theme: '主题 Theme',
-            'quick-reply': '快速回复 Quick Reply'
+            'quick-reply': '快速回复 Quick Reply',
+            'regex-tool': '正则工具 Regex Tool'
         };
         document.getElementById('current-title').textContent = (titleMap[type] || generator.title) + ' 创建器';
 

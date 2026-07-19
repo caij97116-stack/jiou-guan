@@ -788,3 +788,340 @@ body {
     background: none;
     padding: 0;
 }
+
+/* ========== 正则工具 ========== */
+.regex-layout {
+    display: flex;
+    gap: 24px;
+    height: 100%;
+}
+
+.regex-main-col {
+    flex: 1;
+    min-width: 0;
+}
+
+.regex-side-col {
+    width: 380px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    max-height: calc(100vh - 130px);
+}
+
+.regex-side-tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 3px;
+    margin-bottom: 16px;
+}
+
+.regex-side-tab {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.regex-side-tab:hover {
+    color: var(--text-primary);
+}
+
+.regex-side-tab.active {
+    background: var(--accent);
+    color: #fff;
+}
+
+.regex-side-content {
+    display: none;
+}
+
+.regex-side-content.active {
+    display: block;
+}
+
+.regex-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.regex-input-row .form-input {
+    flex: 1;
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+}
+
+.regex-flags {
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 600;
+    min-width: 40px;
+}
+
+.regex-flag-toggles {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.regex-flag-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.regex-flag-label input {
+    accent-color: var(--accent);
+}
+
+.regex-error {
+    font-size: 12px;
+    color: var(--danger);
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: rgba(255, 23, 68, 0.1);
+    border-radius: var(--radius);
+    display: none;
+}
+
+.regex-error.visible {
+    display: block;
+}
+
+.regex-match-result {
+    margin-top: 16px;
+}
+
+.regex-match-empty {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-muted);
+    font-size: 13px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+}
+
+.regex-match-header {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+
+.regex-match-header strong {
+    color: var(--accent);
+}
+
+.regex-highlighted-text {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin-bottom: 16px;
+}
+
+.regex-highlight {
+    background: rgba(233, 69, 96, 0.3);
+    color: #fff;
+    padding: 1px 2px;
+    border-radius: 3px;
+    border-bottom: 2px solid var(--accent);
+}
+
+.regex-groups-section {
+    margin-bottom: 16px;
+}
+
+.regex-groups-title {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.regex-groups-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.regex-groups-table th,
+.regex-groups-table td {
+    padding: 6px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+.regex-groups-table th {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.regex-groups-table code {
+    color: var(--accent);
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+}
+
+.regex-group-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+    margin: 2px 4px 2px 0;
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 11px;
+}
+
+.regex-match-list {
+    margin-top: 16px;
+}
+
+.regex-match-list-title {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.regex-match-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    background: var(--bg-card);
+    border-radius: 6px;
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+
+.regex-match-index {
+    background: var(--accent);
+    color: #fff;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.regex-match-text {
+    flex: 1;
+    color: var(--accent);
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 12px;
+}
+
+.regex-match-pos {
+    color: var(--text-muted);
+    font-size: 11px;
+    flex-shrink: 0;
+}
+
+.regex-category {
+    margin-bottom: 20px;
+}
+
+.regex-cat-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+}
+
+.regex-pattern-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.regex-pattern-item {
+    padding: 10px 12px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+}
+
+.regex-pattern-item:hover {
+    border-color: var(--accent-secondary);
+    background: rgba(83, 52, 131, 0.15);
+}
+
+.regex-pattern-name {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 3px;
+}
+
+.regex-pattern-expr {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--bg-primary);
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--accent);
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    margin-bottom: 3px;
+}
+
+.regex-pattern-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.regex-syntax-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.regex-syntax-table td {
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+}
+
+.regex-syntax-char {
+    width: 100px;
+}
+
+.regex-syntax-char code {
+    color: var(--accent);
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    background: var(--bg-primary);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.regex-syntax-desc {
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.regex-test-text {
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace !important;
+    font-size: 13px !important;
+}

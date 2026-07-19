@@ -236,6 +236,9 @@ function addWIEntry(container, template = null) {
                     <input type="checkbox" class="wi-entry-regex">
                     <label>使用正则表达式</label>
                 </div>
+                <div class="regex-hint wi-regex-hint" style="display:none;margin-top:6px;font-size:11px;color:var(--accent);background:rgba(233,69,96,0.08);padding:8px 12px;border-radius:6px;">
+                    正则模式已启用。关键词将作为正则表达式匹配。<br>点击左侧「正则工具」快速测试和生成表达式。
+                </div>
                 <div class="form-checkbox-group">
                     <input type="checkbox" class="wi-entry-case-sensitive">
                     <label>大小写敏感</label>
@@ -283,6 +286,11 @@ function addWIEntry(container, template = null) {
 
     entryDiv.querySelector('.wi-entry-comment').addEventListener('input', function() {
         entryDiv.querySelector('h4').textContent = this.value || `条目 #${id}`;
+    });
+
+    entryDiv.querySelector('.wi-entry-regex').addEventListener('change', function() {
+        const hint = entryDiv.querySelector('.wi-regex-hint');
+        if (hint) hint.style.display = this.checked ? '' : 'none';
     });
 
     container.appendChild(entryDiv);
