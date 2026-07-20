@@ -16,8 +16,7 @@ const EXTENSION_TEMPLATES = {
             homePage: '',
             auto_update: false
         },
-        indexJS: `import { loadSettings, saveSettingsDebounced } from '../../../../../script.js';
-import { registerSlashCommand } from '../../../slash-commands.js';
+        indexJS: `import { loadSettings, saveSettingsDebounced } from '../../../../../script.js';import { registerSlashCommand } from '../../../slash-commands.js';
 import { eventSource, event_types } from '../../../../../script.js';
 
 // 扩展名称，用于设置存储
@@ -79,8 +78,7 @@ jQuery(async () => {
             homePage: '',
             auto_update: false
         },
-        indexJS: `import { loadSettings, saveSettingsDebounced } from '../../../../../script.js';
-import { registerSlashCommand } from '../../../slash-commands.js';
+        indexJS: `import { loadSettings, saveSettingsDebounced } from '../../../../../script.js';import { registerSlashCommand } from '../../../slash-commands.js';
 import { eventSource, event_types } from '../../../../../script.js';
 
 const EXTENSION_NAME = 'music_player';
@@ -106,7 +104,7 @@ function createPlayerPanel() {
     const panel = document.createElement('div');
     panel.id = 'music-player-panel';
     panel.className = 'st-extension-panel music-player-panel';
-    panel.innerHTML = `
+    panel.innerHTML = \`
         <div class="music-player-header">
             <span class="music-player-title">Music Player</span>
             <div class="music-player-controls-top">
@@ -146,7 +144,7 @@ function createPlayerPanel() {
                 <button class="music-btn music-btn-add">添加</button>
             </div>
         </div>
-    `;
+    \`;
 
     // 插入到 #sheld 或 body 中
     const container = document.getElementById('sheld') || document.body;
@@ -223,11 +221,11 @@ function updatePlaylistUI() {
     settings.playlist.forEach((song, index) => {
         const li = document.createElement('li');
         li.className = 'music-playlist-item' + (index === settings.currentIndex ? ' active' : '');
-        li.innerHTML = `
-            <span class="music-playlist-index">${index + 1}.</span>
-            <span class="music-playlist-name">${escapeHTML(song.name)}</span>
-            <button class="music-btn music-btn-remove" data-index="${index}">&times;</button>
-        `;
+        li.innerHTML = \`
+            <span class="music-playlist-index">\${index + 1}.</span>
+            <span class="music-playlist-name">\${escapeHTML(song.name)}</span>
+            <button class="music-btn music-btn-remove" data-index="\${index}">&times;</button>
+        \`;
         li.addEventListener('click', (e) => {
             if (!e.target.classList.contains('music-btn-remove')) {
                 playIndex(index);
@@ -402,8 +400,7 @@ jQuery(async () => {
     console.log('Music Player 扩展已加载');
 });
 `,
-        styleCSS: `/* 音乐播放器面板 - 浮动窗口样式 */
-.music-player-panel {
+        styleCSS: `/* 音乐播放器面板 - 浮动窗口样式 */.music-player-panel {
     position: fixed;
     bottom: 80px;
     right: 20px;
@@ -631,8 +628,7 @@ jQuery(async () => {
             homePage: '',
             auto_update: false
         },
-        indexJS: `import { loadSettings, saveSettingsDebounced } from '../../../../../script.js';
-import { registerSlashCommand } from '../../../slash-commands.js';
+        indexJS: `import { loadSettings, saveSettingsDebounced } from '../../../../../script.js';import { registerSlashCommand } from '../../../slash-commands.js';
 import { eventSource, event_types, getContext } from '../../../../../script.js';
 
 const EXTENSION_NAME = 'mobile_phone';
@@ -657,11 +653,11 @@ function createPhoneUI() {
     const overlay = document.createElement('div');
     overlay.id = 'mobile-phone-overlay';
     overlay.className = 'mobile-phone-overlay';
-    overlay.innerHTML = `
+    overlay.innerHTML = \`
         <div class="phone-device">
             <div class="phone-notch">
-                <span class="phone-carrier">${escapeHTML(settings.carrier)}</span>
-                <span class="phone-time" id="phone-time">${getCurrentTime()}</span>
+                <span class="phone-carrier">\${escapeHTML(settings.carrier)}</span>
+                <span class="phone-time" id="phone-time">\${getCurrentTime()}</span>
                 <span class="phone-battery">&#128267; 85%</span>
             </div>
             <div class="phone-screen" id="phone-screen">
@@ -671,7 +667,7 @@ function createPhoneUI() {
             <div class="phone-home-bar"></div>
         </div>
         <div class="phone-close-btn" id="phone-close-btn">&times;</div>
-    `;
+    \`;
 
     overlay.querySelector('#phone-close-btn').addEventListener('click', () => {
         phoneVisible = false;
@@ -731,23 +727,23 @@ function addMessage(sender, text, isUser) {
 }
 
 function renderNotifications(container, notifications) {
-    container.innerHTML = notifications.slice(0, 5).map(n => `
-        <div class="phone-notification${n.read ? '' : ' unread'}">
-            <div class="phone-notif-title">${escapeHTML(n.title)}</div>
-            <div class="phone-notif-body">${escapeHTML(n.body)}</div>
-            <div class="phone-notif-time">${n.time}</div>
+    container.innerHTML = notifications.slice(0, 5).map(n => \`
+        <div class="phone-notification\${n.read ? '' : ' unread'}">
+            <div class="phone-notif-title">\${escapeHTML(n.title)}</div>
+            <div class="phone-notif-body">\${escapeHTML(n.body)}</div>
+            <div class="phone-notif-time">\${n.time}</div>
         </div>
-    `).join('');
+    \`).join('');
 }
 
 function renderMessages(container, messages) {
-    container.innerHTML = messages.slice(-20).map(m => `
-        <div class="phone-message${m.isUser ? ' sent' : ' received'}">
-            <div class="phone-msg-sender">${escapeHTML(m.sender)}</div>
-            <div class="phone-msg-bubble">${escapeHTML(m.text)}</div>
-            <div class="phone-msg-time">${m.time}</div>
+    container.innerHTML = messages.slice(-20).map(m => \`
+        <div class="phone-message\${m.isUser ? ' sent' : ' received'}">
+            <div class="phone-msg-sender">\${escapeHTML(m.sender)}</div>
+            <div class="phone-msg-bubble">\${escapeHTML(m.text)}</div>
+            <div class="phone-msg-time">\${m.time}</div>
         </div>
-    `).join('');
+    \`).join('');
     container.scrollTop = container.scrollHeight;
 }
 
@@ -825,8 +821,7 @@ jQuery(async () => {
     console.log('Mobile Phone 扩展已加载');
 });
 `,
-        styleCSS: `/* 同层小手机 - 仿真手机屏幕覆盖层 */
-.mobile-phone-overlay {
+        styleCSS: `/* 同层小手机 - 仿真手机屏幕覆盖层 */.mobile-phone-overlay {
     position: fixed;
     top: 0;
     right: 0;
@@ -1028,8 +1023,7 @@ jQuery(async () => {
             homePage: '',
             auto_update: false
         },
-        indexJS: `import { registerSlashCommand } from '../../../slash-commands.js';
-import { eventSource, event_types, getContext } from '../../../../../script.js';
+        indexJS: `import { registerSlashCommand } from '../../../slash-commands.js';import { eventSource, event_types, getContext } from '../../../../../script.js';
 
 const EXTENSION_NAME = 'dice_roller';
 
@@ -1069,7 +1063,7 @@ function rollDice(expr) {
     if (modifierOp === '-') total -= modifier;
 
     return {
-        expression: `${count}d${sides}${modifierOp ? modifierOp + modifier : ''}`,
+        expression: \`\${count}d\${sides}\${modifierOp ? modifierOp + modifier : ''}\`,
         rolls,
         total,
         count,
@@ -1167,8 +1161,7 @@ jQuery(async () => {
     console.log('Dice Roller 扩展已加载');
 });
 `,
-        styleCSS: `/* 骰子工具可选样式 - 在酒馆中掷骰结果会以斜杠命令返回值形式显示 */
-/* 如需自定义掷骰结果样式，可取消下面的注释并修改 */
+        styleCSS: `/* 骰子工具可选样式 - 在酒馆中掷骰结果会以斜杠命令返回值形式显示 *//* 如需自定义掷骰结果样式，可取消下面的注释并修改 */
 /*
 .st-extension-result {
     font-size: 14px;
@@ -1195,8 +1188,7 @@ jQuery(async () => {
             homePage: '',
             auto_update: false
         },
-        indexJS: `import { loadSettings, saveSettingsDebounced } from '../../../../../script.js';
-import { registerSlashCommand } from '../../../slash-commands.js';
+        indexJS: `import { loadSettings, saveSettingsDebounced } from '../../../../../script.js';import { registerSlashCommand } from '../../../slash-commands.js';
 import { eventSource, event_types, getContext } from '../../../../../script.js';
 
 const EXTENSION_NAME = 'char_status';
@@ -1357,8 +1349,7 @@ jQuery(async () => {
     console.log('Character Status Panel 扩展已加载');
 });
 `,
-        styleCSS: `/* 状态面板可选样式 - 状态信息通过斜杠命令返回值展示 */
-/* 如需自定义显示样式，可在此添加 */
+        styleCSS: `/* 状态面板可选样式 - 状态信息通过斜杠命令返回值展示 *//* 如需自定义显示样式，可在此添加 */
 `
     },
 
@@ -1379,8 +1370,7 @@ jQuery(async () => {
             homePage: '',
             auto_update: false
         },
-        indexJS: `import { loadSettings, saveSettingsDebounced } from '../../../../../script.js';
-import { registerSlashCommand } from '../../../slash-commands.js';
+        indexJS: `import { loadSettings, saveSettingsDebounced } from '../../../../../script.js';import { registerSlashCommand } from '../../../slash-commands.js';
 import { eventSource, event_types, getContext, substituteParams } from '../../../../../script.js';
 
 const EXTENSION_NAME = 'memory_manager';
@@ -1550,8 +1540,7 @@ jQuery(async () => {
             homePage: '',
             auto_update: false
         },
-        indexJS: `import { loadSettings, saveSettingsDebounced } from '../../../../../script.js';
-import { registerSlashCommand } from '../../../slash-commands.js';
+        indexJS: `import { loadSettings, saveSettingsDebounced } from '../../../../../script.js';import { registerSlashCommand } from '../../../slash-commands.js';
 import { eventSource, event_types } from '../../../../../script.js';
 
 const EXTENSION_NAME = 'css_injector';
@@ -1614,8 +1603,7 @@ jQuery(async () => {
     console.log('CSS Injector 扩展已加载');
 });
 `,
-        styleCSS: `/* 把你想注入到酒馆的自定义 CSS 写在这里 */
-/* 这里留空，通过 /setcss 命令动态注入 */
+        styleCSS: `/* 把你想注入到酒馆的自定义 CSS 写在这里 *//* 这里留空，通过 /setcss 命令动态注入 */
 
 /* 示例：修改聊天字体大小 */
 /*
