@@ -55,6 +55,12 @@
                 </div>
             </header>
             <div class="content-area">
+                <div class="draft-banner" id="draft-banner" style="display:none;">
+                    <span class="draft-banner-icon">&#128161;</span>
+                    <span class="draft-banner-text">检测到未保存的草稿</span>
+                    <button class="btn btn-small btn-primary" id="btn-draft-restore">恢复</button>
+                    <button class="btn btn-small btn-danger" id="btn-draft-dismiss">放弃</button>
+                </div>
                 <div class="editor-panel" id="editor-panel">
                 </div>
                 <div class="preview-panel hidden" id="preview-panel">
@@ -68,6 +74,7 @@
             </div>
         </main>
     </div>
+    <script src="js/utils/common.js?v=2"></script>
     <script src="js/utils/png.js?v=2"></script>
     <script src="js/utils/download.js?v=2"></script>
     <script src="js/generators/extension.js?v=2"></script>

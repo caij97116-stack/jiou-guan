@@ -14,11 +14,15 @@
     let currentType = 'extension';
     let previewVisible = false;
     let sidebarOpen = false;
+    let draftSaveTimer = null;
+    let draftLoaded = false;
+    let draftBannerDismissed = {};
 
     function init() {
         bindNavItems();
         bindTopActions();
         bindMobileMenu();
+        bindDraftBanner();
         switchGenerator('extension');
     }
 
@@ -74,7 +78,80 @@
         document.getElementById('btn-download').addEventListener('click', handleDownload);
     }
 
+    function bindDraftBanner() {
+        document.getElementById('btn-draft-restore').addEventListener('click', () => {
+            restoreDraft();
+        });
+        document.getElementById('btn-draft-dismiss').addEventListener('click', () => {
+            const type = currentType;
+            draftBannerDismissed[type] = true;
+            DraftManager.remove(type);
+            hideDraftBanner();
+        });
+    }
+
+    function startAutoSave() {
+        if (draftSaveTimer) clearInterval(draftSaveTimer);
+        draftSaveTimer = setInterval(() => {
+            saveCurrentDraft();
+        }, 3000);
+    }
+
+    function stopAutoSave() {
+        if (draftSaveTimer) {
+            clearInterval(draftSaveTimer);
+            draftSaveTimer = null;
+        }
+    }
+
+    function saveCurrentDraft() {
+        if (draftLoaded) return;
+        const generator = generators[currentType];
+        if (!generator || !generator.getData) return;
+        try {
+            const data = generator.getData();
+            DraftManager.save(currentType, data);
+        } catch (e) {}
+    }
+
+    function restoreDraft() {
+        const generator = generators[currentType];
+        const data = DraftManager.load(currentType);
+        if (!generator || !data) return;
+
+        const editorPanel = document.getElementById('editor-panel');
+        editorPanel.innerHTML = '';
+        generator.render(editorPanel);
+
+        if (generator.loadDraft) {
+            generator.loadDraft(data);
+        }
+
+        if (currentType === 'extension' && generator.applyTemplate) {
+            generator.applyTemplate('blank');
+        }
+
+        draftLoaded = true;
+        hideDraftBanner();
+        startAutoSave();
+        showToast('草稿已恢复', 'success');
+    }
+
+    function showDraftBanner() {
+        const banner = document.getElementById('draft-banner');
+        if (banner) banner.style.display = 'flex';
+    }
+
+    function hideDraftBanner() {
+        const banner = document.getElementById('draft-banner');
+        if (banner) banner.style.display = 'none';
+    }
+
     function switchGenerator(type) {
+        saveCurrentDraft();
+        stopAutoSave();
+        draftLoaded = false;
+
         currentType = type;
         const generator = generators[type];
         if (!generator) return;
@@ -101,6 +178,14 @@
         if (previewVisible) {
             updatePreview();
         }
+
+        if (DraftManager.hasDraft(type) && !draftBannerDismissed[type]) {
+            showDraftBanner();
+        } else {
+            hideDraftBanner();
+        }
+
+        startAutoSave();
     }
 
     function togglePreview() {
@@ -166,6 +251,14 @@
         const generator = generators[currentType];
         if (!generator) return;
 
+        if (generator.validate) {
+            const result = generator.validate();
+            if (!result.valid) {
+                showToast(result.errors.join('；'), 'error');
+                return;
+            }
+        }
+
         if (generator.download) {
             generator.download();
             showToast('下载已开始!', 'success');
@@ -188,15 +281,6 @@
             toast.style.transition = 'opacity 0.3s';
             setTimeout(() => toast.remove(), 300);
         }, 2500);
-    }
-
-    function escapeHTML(str) {
-        return str
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
     }
 
     if (document.readyState === 'loading') {

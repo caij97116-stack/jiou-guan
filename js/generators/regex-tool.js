@@ -115,9 +115,9 @@ const RegexToolGenerator = {
                 <div class="regex-pattern-list">
                     ${cat.patterns.map(p => `
                         <div class="regex-pattern-item" data-regex="${this.escapeAttr(p.regex)}" data-name="${this.escapeAttr(p.name)}">
-                            <div class="regex-pattern-name">${this.escapeHTML(p.name)}</div>
-                            <code class="regex-pattern-expr">${this.escapeHTML(p.regex)}</code>
-                            <div class="regex-pattern-desc">${this.escapeHTML(p.desc)}</div>
+                            <div class="regex-pattern-name">${escapeHTML(p.name)}</div>
+                            <code class="regex-pattern-expr">${escapeHTML(p.regex)}</code>
+                            <div class="regex-pattern-desc">${escapeHTML(p.desc)}</div>
                         </div>
                     `).join('')}
                 </div>
@@ -341,8 +341,8 @@ const RegexToolGenerator = {
                             ${matches.map((m, i) => `
                                 <tr>
                                     <td>${i + 1}</td>
-                                    <td><code>${this.escapeHTML(m.text)}</code></td>
-                                    <td>${m.groups.map((g, j) => '<span class="regex-group-badge">$' + (j + 1) + ': ' + this.escapeHTML(g || '') + '</span>').join(' ')}</td>
+                                    <td><code>${escapeHTML(m.text)}</code></td>
+                                    <td>${m.groups.map((g, j) => '<span class="regex-group-badge">$' + (j + 1) + ': ' + escapeHTML(g || '') + '</span>').join(' ')}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -362,7 +362,7 @@ const RegexToolGenerator = {
                 ${matches.map((m, i) => `
                     <div class="regex-match-item">
                         <span class="regex-match-index">${i + 1}</span>
-                        <code class="regex-match-text">${this.escapeHTML(m.text)}</code>
+                        <code class="regex-match-text">${escapeHTML(m.text)}</code>
                         <span class="regex-match-pos">位置 ${m.index}</span>
                     </div>
                 `).join('')}
@@ -376,14 +376,14 @@ const RegexToolGenerator = {
 
         for (const m of matches) {
             if (m.index > lastEnd) {
-                result += this.escapeHTML(text.substring(lastEnd, m.index));
+                result += escapeHTML(text.substring(lastEnd, m.index));
             }
-            result += '<mark class="regex-highlight">' + this.escapeHTML(m.text) + '</mark>';
+            result += '<mark class="regex-highlight">' + escapeHTML(m.text) + '</mark>';
             lastEnd = m.index + m.length;
         }
 
         if (lastEnd < text.length) {
-            result += this.escapeHTML(text.substring(lastEnd));
+            result += escapeHTML(text.substring(lastEnd));
         }
 
         return result;
@@ -394,12 +394,6 @@ const RegexToolGenerator = {
     },
 
     download() {},
-
-    escapeHTML(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    },
 
     escapeAttr(str) {
         return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');

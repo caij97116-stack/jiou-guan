@@ -1748,4 +1748,65 @@ body {
     .tpl-card {
         padding: 12px;
     }
+
+    .draft-banner {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .draft-banner-text {
+        font-size: 12px;
+    }
+}
+
+/* Draft Banner */
+.draft-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    margin-bottom: 12px;
+    background: rgba(233, 69, 96, 0.1);
+    border: 1px solid rgba(233, 69, 96, 0.25);
+    border-radius: var(--radius);
+    animation: slideIn 0.3s ease;
+}
+
+.draft-banner-icon {
+    font-size: 18px;
+}
+
+.draft-banner-text {
+    flex: 1;
+    font-size: 13px;
+    color: var(--accent);
+}
+
+/* World Info Entry Styles */
+.wi-entry {
+    margin-bottom: 10px;
+}
+
+.wi-regex-hint a {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+/* Import button label */
+#wi-import-label,
+#cc-import-json-label,
+#cc-import-png-label {
+    display: inline-block;
+    padding: 8px 16px;
+}
+
+/* V3 Extensions hint */
+#cc-spec-select + .form-hint {
+    margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+    .wi-entry .form-row-3 {
+        grid-template-columns: 1fr;
+    }
 }

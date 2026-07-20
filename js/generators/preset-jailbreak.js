@@ -927,9 +927,22 @@ ${(data.prompt_order || []).filter(p => p.enabled).map((p, i) => `${i + 1}. ${p.
         DownloadUtils.downloadZip(files);
     },
 
-    escapeHTML(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
+    loadDraft(data) {
+        const setVal = (id, val) => {
+            const el = document.getElementById(id);
+            if (el && val != null) el.value = val;
+        };
+        setVal('pj-name', data.name);
+        setVal('pj-author', data.author);
+        setVal('pj-model', data.model);
+        setVal('pj-description', data.description);
+        setVal('pj-system-prompt', data.system_prompt);
+        setVal('pj-jailbreak-prompt', data.jailbreak_prompt);
+        setVal('pj-stopping-strings', (data.stopping_strings || []).join('\n'));
+
+        const params = data.params || {};
+        for (const [key, value] of Object.entries(params)) {
+            setVal('pj-' + key, value);
+        }
     }
 };

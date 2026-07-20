@@ -1927,7 +1927,7 @@ const ExtensionGenerator = {
         const input = container.querySelector('input');
         const tag = document.createElement('span');
         tag.className = 'tag';
-        tag.innerHTML = `${this.escapeHTML(text)} <span class="tag-remove">&times;</span>`;
+        tag.innerHTML = `${escapeHTML(text)} <span class="tag-remove">&times;</span>`;
         tag.querySelector('.tag-remove').addEventListener('click', () => tag.remove());
         container.insertBefore(tag, input);
     },
@@ -2112,11 +2112,5 @@ const output = substituteParams('你好，{{user}}，我是{{char}}');</pre>
                 </div>
             </div>
         `;
-    },
-
-    escapeHTML(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
     }
 };
