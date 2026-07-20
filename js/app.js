@@ -13,11 +13,44 @@
 
     let currentType = 'extension';
     let previewVisible = false;
+    let sidebarOpen = false;
 
     function init() {
         bindNavItems();
         bindTopActions();
+        bindMobileMenu();
         switchGenerator('extension');
+    }
+
+    function bindMobileMenu() {
+        const btn = document.getElementById('btn-mobile-menu');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        if (!btn || !sidebar || !overlay) return;
+
+        function openSidebar() {
+            sidebarOpen = true;
+            sidebar.classList.add('open');
+            overlay.classList.add('active');
+        }
+
+        function closeSidebar() {
+            sidebarOpen = false;
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        }
+
+        btn.addEventListener('click', () => {
+            sidebarOpen ? closeSidebar() : openSidebar();
+        });
+
+        overlay.addEventListener('click', closeSidebar);
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (sidebarOpen) closeSidebar();
+            });
+        });
     }
 
     function bindNavItems() {

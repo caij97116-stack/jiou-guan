@@ -8,7 +8,8 @@
 </head>
 <body>
     <div class="app-container">
-        <aside class="sidebar">
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h1 class="logo">酒馆插件工坊</h1>
                 <p class="subtitle">SillyTavern Plugin Creator</p>
@@ -46,6 +47,7 @@
         </aside>
         <main class="main-content">
             <header class="top-bar">
+                <button class="mobile-menu-btn" id="btn-mobile-menu" aria-label="菜单">&#9776;</button>
                 <h2 id="current-title">扩展 Extension 创建器</h2>
                 <div class="top-actions">
                     <button class="btn btn-secondary" id="btn-preview">预览代码</button>
@@ -66,15 +68,15 @@
             </div>
         </main>
     </div>
-    <script src="js/utils/png.js"></script>
-    <script src="js/utils/download.js"></script>
-    <script src="js/generators/extension.js"></script>
-    <script src="js/generators/character-card.js"></script>
-    <script src="js/generators/world-info.js"></script>
-    <script src="js/generators/theme.js"></script>
-    <script src="js/generators/quick-reply.js"></script>
-    <script src="js/generators/regex-tool.js"></script>
-    <script src="js/generators/preset-jailbreak.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/utils/png.js?v=2"></script>
+    <script src="js/utils/download.js?v=2"></script>
+    <script src="js/generators/extension.js?v=2"></script>
+    <script src="js/generators/character-card.js?v=2"></script>
+    <script src="js/generators/world-info.js?v=2"></script>
+    <script src="js/generators/theme.js?v=2"></script>
+    <script src="js/generators/quick-reply.js?v=2"></script>
+    <script src="js/generators/regex-tool.js?v=2"></script>
+    <script src="js/generators/preset-jailbreak.js?v=2"></script>
+    <script src="js/app.js?v=2"></script>
 </body>
 </html>

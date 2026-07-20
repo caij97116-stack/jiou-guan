@@ -239,6 +239,57 @@ Do not break character or provide disclaimers.`,
         }
     },
 
+    chatFormats: {
+        chatml: {
+            name: 'ChatML',
+            desc: 'OpenAI 官方格式，社区最常用。适用于 GPT/Qwen/GLM 系列',
+            format: '<|im_start|>system\n{{system_prompt}}\n{{jailbreak_prompt}}\n{{world_info_before}}<|im_end|>\n<|im_start|>user\n{{user_input}}<|im_end|>\n<|im_start|>assistant\n{{char_name}}: ',
+            stopStrings: '<|im_end|>\n<|im_start|>',
+            wrapper: 'chatml'
+        },
+        alpaca: {
+            name: 'Alpaca',
+            desc: 'Stanford Alpaca 格式，简洁清晰。适用于本地模型和部分 API',
+            format: 'Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\n{{system_prompt}}\n{{jailbreak_prompt}}\n\n### Input:\n{{user_input}}\n\n### Response:\n{{char_name}}: ',
+            stopStrings: '###\n### Instruction:\n### Input:',
+            wrapper: 'alpaca'
+        },
+        vicuna: {
+            name: 'Vicuna',
+            desc: 'Vicuna/Llama 对话格式。社区中大量角色扮演预训练模型使用',
+            format: 'A chat between a curious user and an artificial intelligence assistant. The assistant embodies {{char}}, giving helpful, detailed, and immersive responses.\n\nUSER: {{user_input}}\nASSISTANT: ',
+            stopStrings: 'USER:\nASSISTANT:\n</s>',
+            wrapper: 'vicuna'
+        },
+        llama3: {
+            name: 'Llama 3',
+            desc: 'Meta Llama 3 官方格式。适用于 Llama 3/3.1 系列模型',
+            format: '<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n{{system_prompt}}\n{{jailbreak_prompt}}\n{{world_info_before}}<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n{{user_input}}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n',
+            stopStrings: '<|eot_id|>\n<|start_header_id|>',
+            wrapper: 'llama3'
+        },
+        mistral: {
+            name: 'Mistral',
+            desc: 'Mistral AI 官方格式。适用于 Mistral/Mixtral 系列',
+            format: '<s>[INST] {{system_prompt}}\n{{jailbreak_prompt}}\n\n{{user_input}} [/INST] {{char_name}}: ',
+            stopStrings: '</s>\n[INST]',
+            wrapper: 'mistral'
+        }
+    },
+
+    communityResources: [
+        { name: 'SillyTavern 官方文档', url: 'https://docs.sillytavern.app/', desc: '完整的 API 连接和配置指南' },
+        { name: 'Reddit r/SillyTavernAI', url: 'https://www.reddit.com/r/SillyTavernAI/', desc: '英文社区，海量预设和破限分享' },
+        { name: 'GitCode SillyTavern', url: 'https://gitcode.com/GitHub_Trending/si/SillyTavern', desc: '国内镜像，含角色卡和预设资源' }
+    ],
+
+    communityTips: [
+        { title: '上下文长度建议', content: 'DeepSeek: ≤32K tokens | Claude: ≤200K tokens | GPT-4o: ≤128K tokens。预留 20% 给系统提示词和破限。' },
+        { title: '破限层次技巧', content: '社区三层破限法：1) 角色绑定层(角色卡人格) 2) 场景包装层(虚构创作/对话小说) 3) 格式规范层(写作指南、心理描写、感官细节)。逐层递进效果最佳。' },
+        { title: '正则脚本配合', content: '热门正则：1) 模型前缀/后缀注入 2) 回复清洗(去除道德说教) 3) 情感标记增强 4) 角色名替换。配合预设效果翻倍。' },
+        { title: '热门模型参数速查', content: 'DeepSeek: Temp 0.8-1.0, TopP 0.9-1.0 | Claude: Temp 0.7-0.9, TopP 0.95 | GPT-4o: Temp 0.8-1.2, FreqPen 0.1-0.3 | Qwen: Temp 0.7-0.9' }
+    ],
+
     paramDefs: [
         { key: 'temperature', label: 'Temperature 温度', desc: '控制随机性。越高越有创意，越低越稳定保守', min: 0, max: 2, step: 0.01, def: 0.8 },
         { key: 'top_p', label: 'Top P (核采样)', desc: '只考虑累积概率达到 P 的 token。0.9 表示取前 90% 概率的 token', min: 0, max: 1, step: 0.01, def: 0.95 },
@@ -333,6 +384,7 @@ Do not break character or provide disclaimers.`,
                         <button class="pj-tab-btn active" data-pjtab="pj-tab-params">采样参数</button>
                         <button class="pj-tab-btn" data-pjtab="pj-tab-prompts">破限提示词</button>
                         <button class="pj-tab-btn" data-pjtab="pj-tab-order">提示词顺序</button>
+                        <button class="pj-tab-btn" data-pjtab="pj-tab-community">社区模板</button>
                         <button class="pj-tab-btn" data-pjtab="pj-tab-preview">预览导出</button>
                     </div>
                     <div class="pj-tab-content active" id="pj-tab-params">
@@ -428,6 +480,44 @@ Do not break character or provide disclaimers.`,
                             </div>
                         </div>
                     </div>
+                    <div class="pj-tab-content" id="pj-tab-community">
+                        <div class="form-section">
+                            <h3 class="form-section-title">对话格式模板 (Chat Format)</h3>
+                            <p class="form-hint" style="margin-bottom:12px;">不同模型使用不同的提示词格式。选择格式模板后复制到上下文模板中。社区热门格式排行：ChatML > Llama3 > Vicuna > Alpaca</p>
+                            <div class="pj-format-grid" id="pj-format-grid">
+                                ${this._buildFormatCards()}
+                            </div>
+                            <div class="pj-format-preview" id="pj-format-preview" style="display:none;margin-top:16px;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                                    <h4 style="font-size:13px;color:var(--text-secondary);" id="pj-format-title"></h4>
+                                    <button class="btn btn-small btn-primary" id="btn-pj-copy-format">复制到上下文模板</button>
+                                </div>
+                                <pre class="pj-preview-pre" id="pj-format-code" style="max-height:300px;font-size:12px;"></pre>
+                            </div>
+                        </div>
+                        <div class="form-section">
+                            <h3 class="form-section-title">社区技巧速查</h3>
+                            <div class="pj-tips-list">
+                                ${this.communityTips.map(t => `
+                                    <details class="pj-tip-item">
+                                        <summary class="pj-tip-title">${t.title}</summary>
+                                        <p class="pj-tip-content">${t.content}</p>
+                                    </details>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="form-section">
+                            <h3 class="form-section-title">社区资源</h3>
+                            <div class="pj-resource-list">
+                                ${this.communityResources.map(r => `
+                                    <a class="pj-resource-item" href="${r.url}" target="_blank" rel="noopener">
+                                        <span class="pj-resource-name">${r.name}</span>
+                                        <span class="pj-resource-desc">${r.desc}</span>
+                                    </a>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
                     <div class="pj-tab-content" id="pj-tab-preview">
                         <div class="form-section">
                             <h3 class="form-section-title">导出预览</h3>
@@ -455,6 +545,40 @@ Do not break character or provide disclaimers.`,
         this._bindPreviewTabs();
         this._bindExportButtons();
         this._bindQuickInserts();
+        this._bindFormatCards();
+    },
+
+    _bindFormatCards() {
+        document.querySelectorAll('.pj-format-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const key = card.dataset.format;
+                const fmt = this.chatFormats[key];
+                if (!fmt) return;
+
+                document.querySelectorAll('.pj-format-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+
+                const preview = document.getElementById('pj-format-preview');
+                const title = document.getElementById('pj-format-title');
+                const code = document.getElementById('pj-format-code');
+                if (preview) preview.style.display = 'block';
+                if (title) title.textContent = fmt.name + ' - ' + fmt.desc;
+                if (code) code.textContent = fmt.format;
+            });
+        });
+
+        const copyBtn = document.getElementById('btn-pj-copy-format');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', () => {
+                const code = document.getElementById('pj-format-code');
+                const ctxTmpl = document.getElementById('pj-context-template');
+                if (code && ctxTmpl) {
+                    ctxTmpl.value = code.textContent;
+                    this._switchTab('pj-tab-prompts');
+                    ctxTmpl.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        }
     },
 
     _buildPromptOrderHTML() {
@@ -466,6 +590,16 @@ Do not break character or provide disclaimers.`,
                 <div class="form-checkbox-group" style="margin-left:auto;">
                     <input type="checkbox" class="pj-order-check" ${item.enabled ? 'checked' : ''}>
                 </div>
+            </div>
+        `).join('');
+    },
+
+    _buildFormatCards() {
+        return Object.entries(this.chatFormats).map(([key, fmt]) => `
+            <div class="pj-format-card" data-format="${key}">
+                <div class="pj-format-name">${fmt.name}</div>
+                <div class="pj-format-desc">${fmt.desc}</div>
+                <div class="pj-format-badge">${fmt.wrapper.toUpperCase()}</div>
             </div>
         `).join('');
     },
