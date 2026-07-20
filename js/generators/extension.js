@@ -1861,6 +1861,42 @@ const ExtensionGenerator = {
         };
     },
 
+    getData() {
+        return {
+            manifest: this.getManifest(),
+            indexJS: this.getIndexJS(),
+            styleCSS: this.getStyleCSS(),
+            templateKey: this.currentTemplate
+        };
+    },
+
+    loadDraft(data) {
+        if (!data) return;
+        const m = data.manifest || {};
+        const setVal = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
+        setVal('ext-display-name', m.display_name);
+        setVal('ext-loading-order', m.loading_order);
+        setVal('ext-js', m.js);
+        setVal('ext-css', m.css);
+        setVal('ext-author', m.author);
+        setVal('ext-version', m.version);
+        setVal('ext-homepage', m.homePage);
+        const autoEl = document.getElementById('ext-auto-update');
+        if (autoEl) autoEl.checked = !!m.auto_update;
+
+        this._clearTags('ext-requires');
+        this._clearTags('ext-optional');
+        (m.requires || []).forEach(r => this._addTagById('ext-requires', r));
+        (m.optional || []).forEach(r => this._addTagById('ext-optional', r));
+
+        const indexJSEl = document.getElementById('ext-index-js');
+        if (indexJSEl && data.indexJS != null) indexJSEl.value = data.indexJS;
+        const styleCSSEl = document.getElementById('ext-style-css');
+        if (styleCSSEl && data.styleCSS != null) styleCSSEl.value = data.styleCSS;
+
+        this.currentTemplate = data.templateKey || 'blank';
+    },
+
     getIndexJS() {
         return document.getElementById('ext-index-js')?.value || '';
     },
