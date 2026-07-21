@@ -965,11 +965,14 @@ const ThemeGenerator = {
     },
 
     validate() {
+        const errors = [];
         if (!(document.getElementById('theme-name')?.value.trim())) {
-            this._showToast('请输入主题名称');
-            return false;
+            errors.push('请输入主题名称');
         }
-        return true;
+        if (errors.length > 0) {
+            errors.forEach(e => this._showToast(e));
+        }
+        return { valid: errors.length === 0, errors };
     },
 
     loadDraft(data) {

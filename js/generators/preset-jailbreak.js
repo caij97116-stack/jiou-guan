@@ -322,7 +322,6 @@ Do not break character or provide disclaimers.`,
         this._bindTemplateCards();
         this._bindParams();
         this._bindPromptOrder();
-        this._applyTemplate('deepseek');
         this._switchTab('pj-tab-params');
     },
 
@@ -659,7 +658,7 @@ Do not break character or provide disclaimers.`,
         if (contextTemplate) contextTemplate.value = tpl.contextTemplate || '';
         if (instructTemplate) instructTemplate.value = tpl.instructTemplate || '';
 
-        document.getElementById('pj-name').value = tpl.name + ' Preset';
+        document.getElementById('pj-name').value = document.getElementById('pj-name').value || '';
 
         const orderList = document.getElementById('pj-order-list');
         if (orderList) {
@@ -759,30 +758,55 @@ Do not break character or provide disclaimers.`,
         const exportJsonBtn = document.getElementById('btn-pj-export-json');
         if (exportJsonBtn) exportJsonBtn.addEventListener('click', () => {
             const data = this._collectData();
-            DownloadUtils.downloadJSON(data, (data.name || 'preset').replace(/\s+/g, '_') + '.json');
+            const stData = this._toSTPreset(data);
+            DownloadUtils.downloadJSON(stData, (data.name || 'preset').replace(/\s+/g, '_') + '.json');
         });
 
         const exportFullBtn = document.getElementById('btn-pj-export-full');
         if (exportFullBtn) exportFullBtn.addEventListener('click', () => {
             const data = this._collectData();
+            const stData = this._toSTPreset(data);
             const name = (data.name || 'preset').replace(/\s+/g, '_');
             const files = {
-                [name + '.json']: JSON.stringify(data, null, 2),
+                [name + '.json']: JSON.stringify(stData, null, 2),
                 [name + '_jailbreak.txt']: data.jailbreak_prompt || '',
                 [name + '_system.txt']: data.system_prompt || '',
+                [name + '_preview.txt']: this._buildPromptPreview(data),
                 'README.txt': this._buildReadme(data)
             };
             DownloadUtils.downloadZip(files);
         });
     },
 
+    _toSTPreset(data) {
+        const st = {};
+        for (const [stKey, dataKey] of Object.entries(this.ST_KEY_MAP)) {
+            if (data[dataKey] != null) st[stKey] = data[dataKey];
+        }
+        if (data.system_prompt) {
+            st.prompts = [{
+                name: 'System Prompt',
+                system_prompt: true,
+                role: 'system',
+                content: data.system_prompt,
+                identifier: 'main'
+            }];
+        }
+        st.jailbreak_prompt = data.jailbreak_prompt || '';
+        st.context_template = data.context_template || '';
+        st.instruct_template = data.instruct_template || '';
+        st.prompt_order = data.prompt_order || [];
+        return st;
+    },
+
     _updatePreview() {
         const data = this._collectData();
+        const stData = this._toSTPreset(data);
         const jsonPreview = document.getElementById('pj-json-preview');
         const promptPreview = document.getElementById('pj-prompt-preview');
 
         if (jsonPreview) {
-            jsonPreview.textContent = JSON.stringify(data, null, 2);
+            jsonPreview.textContent = JSON.stringify(stData, null, 2);
         }
         if (promptPreview) {
             promptPreview.textContent = this._buildPromptPreview(data);
@@ -887,23 +911,23 @@ Do not break character or provide disclaimers.`,
     },
 
     _buildReadme(data) {
+        const st = this._toSTPreset(data);
         return `# ${data.name}
 
 ## 适用模型
 ${data.model || '通用'}
 
-## 参数摘要
-- Temperature: ${data.temperature}
-- Top P: ${data.top_p}
-- Top K: ${data.top_k}
-- 重复惩罚: ${data.repetition_penalty}
-- 最大回复: ${data.max_tokens} tokens
-- 最大上下文: ${data.max_context} tokens
+## ST 导入方法
+1. 在 SillyTavern "AI 响应配置" 面板选择对应预设
+2. 或手动将 preset.json 导入 ST 预设目录
 
-## 使用说明
-1. 在酒馆中导入 ${data.name}.json 预设文件
-2. 在 AI 响应配置中选择此预设
-3. 确保在预设设置中启用了对应的提示词顺序
+## 采样参数
+- temp: ${st.temp || '-'}
+- top_p: ${st.top_p || '-'}
+- top_k: ${st.top_k || '-'}
+- rep_pen: ${st.rep_pen || '-'}
+- 最大上下文: ${st.max_length || '-'}
+- 最大回复: ${st.max_tokens || '-'}
 
 ## 提示词拼接顺序
 ${(data.prompt_order || []).filter(p => p.enabled).map((p, i) => `${i + 1}. ${p.label}`).join('\n')}
@@ -911,20 +935,27 @@ ${(data.prompt_order || []).filter(p => p.enabled).map((p, i) => `${i + 1}. ${p.
     },
 
     getPreviewFiles() {
+        const stData = this._toSTPreset(this._collectData());
         return [
-            { name: 'preset.json', content: JSON.stringify(this._collectData(), null, 2), lang: 'json' }
+            { name: 'preset.json', content: JSON.stringify(stData, null, 2), lang: 'json' }
         ];
     },
 
     download() {
         const data = this._collectData();
+        const stData = this._toSTPreset(data);
         const name = (data.name || 'preset').replace(/\s+/g, '_');
         const files = {
-            [name + '.json']: JSON.stringify(data, null, 2),
+            [name + '.json']: JSON.stringify(stData, null, 2),
             [name + '_jailbreak.txt']: data.jailbreak_prompt || '',
             [name + '_system.txt']: data.system_prompt || '',
+            [name + '_preview.txt']: this._buildPromptPreview(data),
         };
         DownloadUtils.downloadZip(files);
+    },
+
+    validate() {
+        return { valid: true, errors: [] };
     },
 
     loadDraft(data) {
@@ -938,11 +969,44 @@ ${(data.prompt_order || []).filter(p => p.enabled).map((p, i) => `${i + 1}. ${p.
         setVal('pj-description', data.description);
         setVal('pj-system-prompt', data.system_prompt);
         setVal('pj-jailbreak-prompt', data.jailbreak_prompt);
-        setVal('pj-stopping-strings', (data.stopping_strings || []).join('\n'));
+        setVal('pj-context-template', data.context_template);
+        setVal('pj-instruct-template', data.instruct_template);
+        setVal('pj-stopping-strings', (data.stopping_strings || ''));
 
-        const params = data.params || {};
-        for (const [key, value] of Object.entries(params)) {
-            setVal('pj-' + key, value);
+        for (const p of this.paramDefs) {
+            if (data[p.key] != null) {
+                setVal('pj-' + p.key, data[p.key]);
+                const valEl = document.getElementById('pj-val-' + p.key);
+                if (valEl) valEl.textContent = data[p.key];
+            }
+        }
+
+        const boolKeys = ['do_sample', 'stream', 'skip_special_tokens', 'add_bos_token', 'ban_eos_token', 'temperature_last'];
+        boolKeys.forEach(key => {
+            const el = document.getElementById('pj-' + key);
+            if (el && data[key] != null) el.checked = data[key];
+        });
+
+        if (data.prompt_order && data.prompt_order.length) {
+            const orderList = document.getElementById('pj-order-list');
+            if (orderList) {
+                orderList.innerHTML = '';
+                data.prompt_order.forEach((item, i) => {
+                    const div = document.createElement('div');
+                    div.className = 'pj-order-item';
+                    div.draggable = true;
+                    div.dataset.id = item.id;
+                    div.innerHTML = `
+                        <span class="pj-order-drag">&#9776;</span>
+                        <span class="pj-order-index">${i + 1}</span>
+                        <span class="pj-order-label">${item.label}</span>
+                        <div class="form-checkbox-group" style="margin-left:auto;">
+                            <input type="checkbox" class="pj-order-check" ${item.enabled ? 'checked' : ''}>
+                        </div>`;
+                    orderList.appendChild(div);
+                });
+                this._bindPromptOrder();
+            }
         }
     }
 };

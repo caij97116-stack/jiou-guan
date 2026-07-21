@@ -5,7 +5,7 @@
         extension: ExtensionGenerator,
         'character-card': CharacterCardGenerator,
         'world-info': WorldInfoGenerator,
-        theme: ThemeGenerator,
+        theme: ThemeAIGenerator,
         'quick-reply': QuickReplyGenerator,
         'regex-tool': RegexToolGenerator,
         'preset-jailbreak': PresetJailbreakGenerator
@@ -160,7 +160,7 @@
             extension: '扩展 Extension',
             'character-card': '角色卡 Character Card',
             'world-info': '世界书 World Info',
-            theme: '主题 Theme',
+            theme: '主题 AI 助手',
             'quick-reply': '快速回复 Quick Reply',
             'regex-tool': '正则工具 Regex Tool',
             'preset-jailbreak': '预设/破限 Preset & Jailbreak'
