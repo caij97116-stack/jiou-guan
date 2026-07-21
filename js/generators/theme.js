@@ -633,7 +633,7 @@ const ThemeGenerator = {
                     const data = JSON.parse(e.target.result);
                     this._applyImportData(data, file.name, label);
                 } catch (err) {
-                    this._showToast('导入失败：无效的 JSON 文件');
+                    window.showToast('导入失败：无效的 JSON 文件');
                 }
             };
             reader.readAsText(file);
@@ -678,7 +678,7 @@ const ThemeGenerator = {
             if (cssEl) cssEl.value = data.customCSS;
         }
         if (label) label.textContent = filename;
-        this._showToast('主题已导入');
+        window.showToast('主题已导入');
     },
 
     /* ── 收集表单数据 ── */
@@ -952,17 +952,6 @@ const ThemeGenerator = {
         });
     },
 
-    _showToast(msg) {
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.textContent = msg;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.classList.add('show'), 10);
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
-        }, 2500);
-    },
 
     validate() {
         const errors = [];
@@ -970,7 +959,7 @@ const ThemeGenerator = {
             errors.push('请输入主题名称');
         }
         if (errors.length > 0) {
-            errors.forEach(e => this._showToast(e));
+            errors.forEach(e => window.showToast(e));
         }
         return { valid: errors.length === 0, errors };
     },

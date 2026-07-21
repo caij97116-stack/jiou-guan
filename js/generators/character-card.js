@@ -164,9 +164,9 @@ const CharacterCardGenerator = {
                         const data = JSON.parse(e.target.result);
                         this._populateForm(data);
                         if (jsonLabel) jsonLabel.textContent = file.name;
-                        this._showToast('角色卡 JSON 已导入');
+                        window.showToast('角色卡 JSON 已导入');
                     } catch (err) {
-                        this._showToast('导入失败：无效的 JSON 文件');
+                        window.showToast('导入失败：无效的 JSON 文件');
                     }
                 };
                 reader.readAsText(file);
@@ -185,12 +185,12 @@ const CharacterCardGenerator = {
                         const data = JSON.parse(jsonStr);
                         this._populateForm(data);
                         if (pngLabel) pngLabel.textContent = file.name;
-                        this._showToast('角色卡 PNG 已导入');
+                        window.showToast('角色卡 PNG 已导入');
                     } else {
-                        this._showToast('PNG 中未找到角色卡数据');
+                        window.showToast('PNG 中未找到角色卡数据');
                     }
                 } catch (err) {
-                    this._showToast('导入失败：无法解析 PNG 中的角色卡数据');
+                    window.showToast('导入失败：无法解析 PNG 中的角色卡数据');
                 }
             });
         }
@@ -491,17 +491,8 @@ const CharacterCardGenerator = {
         DownloadUtils.downloadJSON(data, name + '.json');
     },
 
-    _showToast(msg) {
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.textContent = msg;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.classList.add('show'), 10);
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
-        }, 2500);
-    }
+
+
 };
 
 

@@ -357,7 +357,7 @@ blockquote                         引用块
         const apiKey = document.getElementById('themai-apikey').value.trim();
 
         if (!endpoint || !apiKey) {
-            this._showToast('请先填写 API 端点和 Key');
+            window.showToast('请先填写 API 端点和 Key');
             return;
         }
 
@@ -379,7 +379,7 @@ blockquote                         引用块
             const models = (data.data || []).map(m => m.id).sort();
 
             if (models.length === 0) {
-                this._showToast('未获取到模型列表');
+                window.showToast('未获取到模型列表');
                 return;
             }
 
@@ -388,9 +388,9 @@ blockquote                         引用块
             select.innerHTML = '<option value="">-- 选择模型 --</option>' +
                 models.map(m => '<option value="' + this._escAttr(m) + '">' + this._escHtml(m) + '</option>').join('');
 
-            this._showToast('已获取 ' + models.length + ' 个模型');
+            window.showToast('已获取 ' + models.length + ' 个模型');
         } catch (err) {
-            this._showToast('拉取失败: ' + err.message);
+            window.showToast('拉取失败: ' + err.message);
         } finally {
             btn.disabled = false;
             btn.textContent = '拉取模型';
@@ -400,7 +400,7 @@ blockquote                         引用块
     _savePreset() {
         const nameInput = document.getElementById('themai-preset-name');
         const name = nameInput.value.trim();
-        if (!name) { this._showToast('请输入预设名称'); return; }
+        if (!name) { window.showToast('请输入预设名称'); return; }
 
         const config = {
             name: name,
@@ -420,7 +420,7 @@ blockquote                         引用块
         this._renderPresetList();
         this._renderPresetSelector();
         nameInput.value = '';
-        this._showToast('预设「' + name + '」已保存');
+        window.showToast('预设「' + name + '」已保存');
     },
 
     _loadPreset(index) {
@@ -437,7 +437,7 @@ blockquote                         引用块
         };
         this._saveState();
         this._renderPresetSelector();
-        this._showToast('已切换到预设「' + preset.name + '」');
+        window.showToast('已切换到预设「' + preset.name + '」');
     },
 
     _deletePreset(index) {
@@ -447,7 +447,7 @@ blockquote                         引用块
         this._saveState();
         this._renderPresetList();
         this._renderPresetSelector();
-        this._showToast('预设「' + preset.name + '」已删除');
+        window.showToast('预设「' + preset.name + '」已删除');
     },
 
     _renderPresetList() {
@@ -507,7 +507,7 @@ blockquote                         引用块
         const model = document.getElementById('themai-model').value.trim();
 
         if (!endpoint || !apiKey || !model) {
-            this._showToast('请先在 API 配置中填写端点、Key 和模型');
+            window.showToast('请先在 API 配置中填写端点、Key 和模型');
             return;
         }
 
@@ -517,6 +517,7 @@ blockquote                         引用块
         document.getElementById('themai-welcome')?.classList.add('hidden');
 
         this.state.messages.push({ role: 'user', content: text });
+        this.state.messages.push({ role: 'assistant', content: '...' });
         this._renderMessages();
         this._scrollToBottom();
         this._saveState();
@@ -530,9 +531,10 @@ blockquote                         引用块
                 model: model,
                 messages: [
                     { role: 'system', content: this.SYSPROMPT },
-                    ...this.state.messages
+                    ...this.state.messages.slice(0, -1)
                 ],
-                temperature: 0.7
+                temperature: 0.7,
+                stream: true
             };
 
             const resp = await fetch(endpointClean + '/chat/completions', {
@@ -549,17 +551,48 @@ blockquote                         引用块
                 throw new Error('API 错误 (HTTP ' + resp.status + '): ' + errText.substring(0, 200));
             }
 
-            const data = await resp.json();
-            const reply = data.choices?.[0]?.message?.content || '';
+            const reader = resp.body.getReader();
+            const decoder = new TextDecoder();
+            let fullReply = '';
+            const lastMsg = this.state.messages[this.state.messages.length - 1];
+            let lastUpdate = 0;
 
-            this.state.messages.push({ role: 'assistant', content: reply });
-            this._extractCSS(reply);
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = chunk.split('\n');
+                for (const line of lines) {
+                    if (!line.startsWith('data: ')) continue;
+                    const data = line.slice(6).trim();
+                    if (data === '[DONE]') continue;
+                    try {
+                        const json = JSON.parse(data);
+                        const delta = json.choices?.[0]?.delta?.content;
+                        if (delta) {
+                            fullReply += delta;
+                            lastMsg.content = fullReply;
+                            const now = Date.now();
+                            if (now - lastUpdate > 30) {
+                                lastUpdate = now;
+                                this._renderMessages();
+                                this._scrollToBottom();
+                            }
+                        }
+                    } catch (e) { /* 忽略解析错误 */ }
+                }
+            }
+
+            lastMsg.content = fullReply || '（未返回内容）';
+            this._extractCSS(fullReply);
             this._renderMessages();
             this._updateOutputBar();
             this._scrollToBottom();
             this._saveState();
         } catch (err) {
-            this.state.messages.push({ role: 'assistant', content: '**请求失败:** ' + err.message });
+            const lastMsg = this.state.messages[this.state.messages.length - 1];
+            lastMsg.content = '**请求失败:** ' + err.message;
             this._renderMessages();
             this._scrollToBottom();
             this._saveState();
@@ -671,13 +704,13 @@ blockquote                         引用块
 
     _copyCSS() {
         if (!this.state.generatedCSS) {
-            this._showToast('暂无生成的 CSS');
+            window.showToast('暂无生成的 CSS');
             return;
         }
         navigator.clipboard.writeText(this.state.generatedCSS).then(() => {
-            this._showToast('CSS 已复制到剪贴板');
+            window.showToast('CSS 已复制到剪贴板');
         }).catch(() => {
-            this._showToast('复制失败，请手动选择');
+            window.showToast('复制失败，请手动选择');
         });
     },
 
@@ -705,7 +738,7 @@ blockquote                         引用块
     download() {
         const css = this.state.generatedCSS;
         if (!css) {
-            this._showToast('暂无生成的 CSS 可下载');
+            window.showToast('暂无生成的 CSS 可下载');
             return;
         }
         DownloadUtils.downloadZip({ 'theme.css': css });
@@ -722,17 +755,6 @@ blockquote                         引用块
         this._updateOutputBar();
     },
 
-    _showToast(msg) {
-        const existing = document.querySelector('.toast');
-        if (existing) existing.remove();
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.textContent = msg;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.classList.add('show'), 10);
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
-        }, 2500);
-    }
+
+
 };

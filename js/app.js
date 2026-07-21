@@ -291,21 +291,6 @@
         }
     }
 
-    function showToast(message, type) {
-        const existing = document.querySelector('.toast');
-        if (existing) existing.remove();
-
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.textContent = message;
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transition = 'opacity 0.3s';
-            setTimeout(() => toast.remove(), 300);
-        }, 2500);
-    }
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);

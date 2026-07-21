@@ -229,9 +229,9 @@ const QuickReplyGenerator = {
                         if (entries.length > 0) {
                             this._renderQRItems(JSON.parse(JSON.stringify(entries)));
                         }
-                        this._showToast('快速回复集已导入');
+                        window.showToast('快速回复集已导入');
                     } catch (err) {
-                        this._showToast('导入失败：无效的 JSON 文件');
+                        window.showToast('导入失败：无效的 JSON 文件');
                     }
                 };
                 reader.readAsText(file);
@@ -325,17 +325,8 @@ const QuickReplyGenerator = {
         return { valid: errors.length === 0, errors };
     },
 
-    _showToast(msg) {
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.textContent = msg;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.classList.add('show'), 10);
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
-        }, 2500);
-    },
+
+
 
     loadDraft(data) {
         const nameEl = document.getElementById('qr-name');

@@ -744,6 +744,80 @@ body {
     tab-size: 2;
 }
 
+/* ========== 扩展引导提示 ========== */
+.ext-guide {
+    margin-top: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    overflow: hidden;
+}
+
+.ext-guide-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--surface2);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+}
+
+.ext-guide-toggle {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 2px 8px;
+}
+
+.ext-guide-toggle:hover {
+    text-decoration: underline;
+}
+
+.ext-guide-body {
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+}
+
+.ext-guide-body ol {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.ext-guide-body ol li {
+    margin-bottom: 6px;
+}
+
+.ext-guide-body code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.ext-guide-body strong {
+    color: var(--text);
+}
+
+.ext-guide-tips {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(59, 130, 246, 0.08);
+    border-radius: 8px;
+    border-left: 3px solid var(--primary);
+    font-size: 12px;
+}
+
+.ext-guide.collapsed .ext-guide-body {
+    display: none;
+}
+
 /* ========== API 参考样式 ========== */
 .api-ref-item {
     margin-bottom: 20px;

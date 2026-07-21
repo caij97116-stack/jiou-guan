@@ -4,6 +4,22 @@ window.escapeHTML = function(str) {
     return div.innerHTML;
 };
 
+window.showToast = function(message, type) {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.className = 'toast' + (type ? ' ' + type : '');
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 2500);
+};
+
 window.DraftManager = {
     _prefix: 'jiou_draft_',
     _autoSaveInterval: null,

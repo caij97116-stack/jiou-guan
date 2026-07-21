@@ -163,9 +163,9 @@ const WorldInfoGenerator = {
                             this._addWIEntry(container, entry);
                         }
                     }
-                    this._showToast('世界书已导入');
+                    window.showToast('世界书已导入');
                 } catch (err) {
-                    this._showToast('导入失败：无效的 JSON 文件');
+                    window.showToast('导入失败：无效的 JSON 文件');
                 }
             };
             reader.readAsText(file);
@@ -391,17 +391,8 @@ const WorldInfoGenerator = {
         return { valid: errors.length === 0, errors };
     },
 
-    _showToast(msg) {
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.textContent = msg;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.classList.add('show'), 10);
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
-        }, 2500);
-    },
+
+
 
     loadDraft(data) {
         if (data.name) {

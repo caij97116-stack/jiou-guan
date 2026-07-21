@@ -1651,6 +1651,7 @@ const ExtensionGenerator = {
         this._bindTemplateCards();
         this._bindExtTabs();
         this._bindInfoTags();
+        this._bindGuideToggle();
         this._switchExtTab('ext-tab-templates');
     },
 
@@ -1758,6 +1759,23 @@ const ExtensionGenerator = {
                 <div class="code-editor-panel" id="code-style-css">
                     <textarea class="form-textarea code-editor-textarea" id="ext-style-css" style="min-height:500px;font-family:'Fira Code','Cascadia Code','Consolas',monospace;font-size:13px;line-height:1.5;tab-size:2;" spellcheck="false" placeholder="/* CSS 样式（可选） */"></textarea>
                 </div>
+                <div class="ext-guide" id="ext-guide">
+                    <div class="ext-guide-header" id="ext-guide-header">
+                        <span>&#9432; 操作指南</span>
+                        <button class="ext-guide-toggle" id="ext-guide-toggle">收起</button>
+                    </div>
+                    <div class="ext-guide-body" id="ext-guide-body">
+                        <ol>
+                            <li><strong>基本信息</strong>：切换到「基本信息」标签页，填写扩展名称、版本号、作者等信息</li>
+                            <li><strong>编写代码</strong>：在当前编辑器中编写 <code>index.js</code>（主逻辑）和 <code>style.css</code>（可选样式）</li>
+                            <li><strong>预览下载</strong>：点击底部「预览」查看生成的文件结构，或直接「下载 ZIP」</li>
+                            <li><strong>安装使用</strong>：将下载的 ZIP 解压到 SillyTavern 的 <code>data/default-user/extensions/</code> 目录</li>
+                        </ol>
+                        <div class="ext-guide-tips">
+                            <strong>提示：</strong>参考「API 参考」标签页了解 Slash Command、Event 类型和可用的 ST 内置函数
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="ext-tab-content" id="ext-tab-apiref">
                 ${apiRefHTML}
@@ -1796,6 +1814,17 @@ const ExtensionGenerator = {
     _bindInfoTags() {
         this._initTagsInput('ext-requires');
         this._initTagsInput('ext-optional');
+    },
+
+    _bindGuideToggle() {
+        const header = document.getElementById('ext-guide-header');
+        const toggle = document.getElementById('ext-guide-toggle');
+        const guide = document.getElementById('ext-guide');
+        if (!header || !toggle || !guide) return;
+        header.addEventListener('click', () => {
+            guide.classList.toggle('collapsed');
+            toggle.textContent = guide.classList.contains('collapsed') ? '展开' : '收起';
+        });
     },
 
     _switchExtTab(tabId) {
