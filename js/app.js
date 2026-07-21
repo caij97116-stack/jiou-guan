@@ -172,7 +172,9 @@
     }
 
     function switchGenerator(type) {
-        saveCurrentDraft();
+        if (currentType !== type) {
+            saveCurrentDraft();
+        }
         stopAutoSave();
         draftLoaded = false;
 
