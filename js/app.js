@@ -17,8 +17,10 @@
     let draftSaveTimer = null;
     let draftLoaded = false;
     let draftBannerDismissed = {};
+    let draftInteractionHandler = null;
 
     function init() {
+        DraftManager.clearAll();
         bindNavItems();
         bindTopActions();
         bindMobileMenu();
@@ -102,6 +104,27 @@
             clearInterval(draftSaveTimer);
             draftSaveTimer = null;
         }
+        if (draftInteractionHandler) {
+            const panel = document.getElementById('editor-panel');
+            if (panel) {
+                panel.removeEventListener('input', draftInteractionHandler);
+                panel.removeEventListener('change', draftInteractionHandler);
+            }
+            draftInteractionHandler = null;
+        }
+    }
+
+    function startAutoSaveOnInteraction() {
+        const panel = document.getElementById('editor-panel');
+        if (!panel) return;
+        draftInteractionHandler = () => {
+            startAutoSave();
+            panel.removeEventListener('input', draftInteractionHandler);
+            panel.removeEventListener('change', draftInteractionHandler);
+            draftInteractionHandler = null;
+        };
+        panel.addEventListener('input', draftInteractionHandler);
+        panel.addEventListener('change', draftInteractionHandler);
     }
 
     function saveCurrentDraft() {
@@ -134,6 +157,7 @@
         draftLoaded = true;
         hideDraftBanner();
         startAutoSave();
+        setTimeout(() => { draftLoaded = false; }, 5000);
         showToast('草稿已恢复', 'success');
     }
 
@@ -185,7 +209,7 @@
             hideDraftBanner();
         }
 
-        startAutoSave();
+        startAutoSaveOnInteraction();
     }
 
     function togglePreview() {
