@@ -330,138 +330,126 @@ ASSISTANT: `
         `).join('');
 
         container.innerHTML = `
-            <div class="pj-layout">
-                <div class="pj-sidebar">
-                    <div class="form-section" style="margin-bottom:12px;">
-                        <h3 class="form-section-title">社区破限模板</h3>
-                        <p class="form-hint" style="margin-bottom:10px;">点击卡片快速创建条目</p>
-                        <div class="pj-tpl-grid">
-                            ${templateCards}
-                        </div>
+            <div class="form-section">
+                <h3 class="form-section-title">预设信息</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">预设名称</label>
+                        <input type="text" class="form-input" id="pj-name" placeholder="My Preset">
                     </div>
-                    <div class="form-section">
-                        <h3 class="form-section-title">Context 预设</h3>
-                        <p class="form-hint" style="margin-bottom:10px;">点击应用到对应条目</p>
-                        <div class="pj-format-grid">
-                            ${contextCards}
-                        </div>
-                    </div>
-                    <div class="form-section">
-                        <h3 class="form-section-title">Instruct 预设</h3>
-                        <p class="form-hint" style="margin-bottom:10px;">点击应用到对应条目</p>
-                        <div class="pj-format-grid">
-                            ${instructCards}
-                        </div>
-                    </div>
-                    <div class="form-section">
-                        <h3 class="form-section-title">社区提示</h3>
-                        <div class="pj-tips-list">
-                            ${tipsHTML}
-                        </div>
-                    </div>
-                    <div class="form-section">
-                        <h3 class="form-section-title">社区资源</h3>
-                        <div class="pj-resource-list">
-                            ${this.communityResources.map(r => `
-                                <a class="pj-resource-item" href="${r.url}" target="_blank" rel="noopener">
-                                    <div class="pj-resource-name">${r.name}</div>
-                                    <div class="pj-resource-desc">${r.desc}</div>
-                                </a>
-                            `).join('')}
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">作者</label>
+                        <input type="text" class="form-input" id="pj-author" placeholder="Your Name">
                     </div>
                 </div>
-
-                <div class="pj-main">
-                    <div class="form-section">
-                        <h3 class="form-section-title">预设信息</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">预设名称</label>
-                                <input type="text" class="form-input" id="pj-name" placeholder="My Preset">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">作者</label>
-                                <input type="text" class="form-input" id="pj-author" placeholder="Your Name">
-                            </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">适用模型</label>
+                        <input type="text" class="form-input" id="pj-model" placeholder="DeepSeek-V3 / GPT-4o / Claude-3.5...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">描述说明</label>
+                        <input type="text" class="form-input" id="pj-description" placeholder="简要描述此预设的用途...">
+                    </div>
+                </div>
+            </div>
+            <div class="form-section">
+                <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" id="pj-params-header">
+                    <h3 class="form-section-title" style="margin:0;">采样参数</h3>
+                    <span style="color:var(--text-muted);font-size:12px;" id="pj-params-toggle">收起</span>
+                </div>
+                <div id="pj-params-body">
+                    <div class="pj-params-scroll">
+                        ${paramSliders}
+                    </div>
+                    <h3 class="form-section-title">开关选项</h3>
+                    <div class="pj-switches">
+                        <div class="form-checkbox-group">
+                            <input type="checkbox" id="pj-do_sample" checked>
+                            <label>Do Sample（启用温度采样）</label>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">适用模型</label>
-                                <input type="text" class="form-input" id="pj-model" placeholder="DeepSeek-V3 / GPT-4o / Claude-3.5...">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">描述说明</label>
-                                <input type="text" class="form-input" id="pj-description" placeholder="简要描述此预设的用途...">
-                            </div>
+                        <div class="form-checkbox-group">
+                            <input type="checkbox" id="pj-stream" checked>
+                            <label>流式输出 (Stream)</label>
+                        </div>
+                        <div class="form-checkbox-group">
+                            <input type="checkbox" id="pj-skip_special_tokens" checked>
+                            <label>跳过特殊 Token</label>
+                        </div>
+                        <div class="form-checkbox-group">
+                            <input type="checkbox" id="pj-add_bos_token" checked>
+                            <label>添加 BOS Token</label>
+                        </div>
+                        <div class="form-checkbox-group">
+                            <input type="checkbox" id="pj-ban_eos_token">
+                            <label>禁止 EOS Token</label>
+                        </div>
+                        <div class="form-checkbox-group">
+                            <input type="checkbox" id="pj-temperature_last">
+                            <label>Temperature Last</label>
                         </div>
                     </div>
-
-                    <div class="form-section">
-                        <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" id="pj-params-header">
-                            <h3 class="form-section-title" style="margin:0;">采样参数</h3>
-                            <span style="color:var(--text-muted);font-size:12px;" id="pj-params-toggle">收起</span>
-                        </div>
-                        <div id="pj-params-body">
-                            <div class="pj-params-scroll">
-                                ${paramSliders}
-                            </div>
-                            <div class="form-section" style="border:none;padding:0;">
-                                <h3 class="form-section-title">开关选项</h3>
-                                <div class="pj-switches">
-                                    <div class="form-checkbox-group">
-                                        <input type="checkbox" id="pj-do_sample" checked>
-                                        <label>Do Sample（启用以使用温度采样）</label>
-                                    </div>
-                                    <div class="form-checkbox-group">
-                                        <input type="checkbox" id="pj-stream" checked>
-                                        <label>流式输出 (Stream)</label>
-                                    </div>
-                                    <div class="form-checkbox-group">
-                                        <input type="checkbox" id="pj-skip_special_tokens" checked>
-                                        <label>跳过特殊 Token</label>
-                                    </div>
-                                    <div class="form-checkbox-group">
-                                        <input type="checkbox" id="pj-add_bos_token" checked>
-                                        <label>添加 BOS Token</label>
-                                    </div>
-                                    <div class="form-checkbox-group">
-                                        <input type="checkbox" id="pj-ban_eos_token">
-                                        <label>禁止 EOS Token</label>
-                                    </div>
-                                    <div class="form-checkbox-group">
-                                        <input type="checkbox" id="pj-temperature_last">
-                                        <label>Temperature Last</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">停止字符串</label>
-                                <textarea class="form-textarea" id="pj-stopping-strings" rows="2" placeholder="每行一个停止字符串，如：&#10;&lt;/s&gt;&#10;###"></textarea>
-                                <span class="form-hint">每行一个字符串。模型生成这些内容时停止输出</span>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">停止字符串</label>
+                        <textarea class="form-textarea" id="pj-stopping-strings" rows="2" placeholder="每行一个停止字符串，如：&#10;&lt;/s&gt;&#10;###"></textarea>
+                        <span class="form-hint">每行一个字符串。模型生成这些内容时停止输出</span>
                     </div>
-
-                    <div class="form-section">
-                        <div style="display:flex;justify-content:space-between;align-items:center;">
-                            <h3 class="form-section-title" style="margin:0;">预设条目</h3>
-                            <button class="btn btn-small btn-primary" id="btn-add-pj-entry">+ 添加条目</button>
-                        </div>
-                        <p class="form-hint" style="margin-bottom:12px;">每条条目代表预设的一个组成部分（系统提示词/破限提示词/上下文模板/指令序列）。勾选启用的条目会被合并到最终的 ST 预设中。</p>
-                        <div id="pj-entries"></div>
-                    </div>
-
-                    <div class="form-section">
-                        <h3 class="form-section-title">导入 ST 预设</h3>
-                        <div style="display:flex;gap:10px;align-items:center;">
-                            <label class="btn btn-secondary" style="cursor:pointer;">
-                                <span id="pj-import-label">选择 preset.json 文件</span>
-                                <input type="file" id="pj-import-file" accept=".json" style="display:none;">
-                            </label>
-                            <span class="form-hint">导入已有 ST 预设 JSON 进行编辑</span>
-                        </div>
-                    </div>
+                </div>
+            </div>
+            <div class="form-section">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <h3 class="form-section-title" style="margin:0;">预设条目</h3>
+                    <button class="btn btn-small btn-primary" id="btn-add-pj-entry">+ 添加条目</button>
+                </div>
+                <p class="form-hint" style="margin-bottom:12px;">每条条目代表预设的一个组成部分（系统提示词/破限提示词/上下文模板/指令序列）。勾选启用的条目会被合并到最终的 ST 预设中。</p>
+                <div id="pj-entries"></div>
+            </div>
+            <div class="form-section">
+                <h3 class="form-section-title">社区提示词模板</h3>
+                <p class="form-hint" style="margin-bottom:10px;">点击卡片快速创建预设条目</p>
+                <div class="pj-tpl-grid">
+                    ${templateCards}
+                </div>
+            </div>
+            <div class="form-section">
+                <h3 class="form-section-title">Context 上下文预设</h3>
+                <p class="form-hint" style="margin-bottom:10px;">点击应用到对应条目</p>
+                <div class="pj-format-grid">
+                    ${contextCards}
+                </div>
+            </div>
+            <div class="form-section">
+                <h3 class="form-section-title">Instruct 指令预设</h3>
+                <p class="form-hint" style="margin-bottom:10px;">点击应用到对应条目</p>
+                <div class="pj-format-grid">
+                    ${instructCards}
+                </div>
+            </div>
+            <div class="form-section">
+                <h3 class="form-section-title">社区提示</h3>
+                <div class="pj-tips-list">
+                    ${tipsHTML}
+                </div>
+            </div>
+            <div class="form-section">
+                <h3 class="form-section-title">社区资源</h3>
+                <div class="pj-resource-list">
+                    ${this.communityResources.map(r => `
+                        <a class="pj-resource-item" href="${r.url}" target="_blank" rel="noopener">
+                            <div class="pj-resource-name">${r.name}</div>
+                            <div class="pj-resource-desc">${r.desc}</div>
+                        </a>
+                    `).join('')}
+                </div>
+            </div>
+            <div class="form-section">
+                <h3 class="form-section-title">导入 ST 预设</h3>
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <label class="btn btn-secondary" style="cursor:pointer;">
+                        <span id="pj-import-label">选择 preset.json 文件</span>
+                        <input type="file" id="pj-import-file" accept=".json" style="display:none;">
+                    </label>
+                    <span class="form-hint">导入已有 ST 预设 JSON 进行编辑</span>
                 </div>
             </div>
         `;

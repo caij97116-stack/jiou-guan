@@ -1213,30 +1213,10 @@ body {
 }
 
 /* ========== 预设/破限制作器 ========== */
-.pj-layout {
-    display: flex;
-    gap: 24px;
-    height: 100%;
-}
-
-.pj-sidebar {
-    width: 320px;
-    flex-shrink: 0;
-    overflow-y: auto;
-    max-height: calc(100vh - 130px);
-}
-
-.pj-main {
-    flex: 1;
-    min-width: 0;
-    overflow-y: auto;
-    max-height: calc(100vh - 130px);
-}
-
 .pj-tpl-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 6px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 8px;
 }
 
 .pj-tpl-card {
