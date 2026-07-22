@@ -652,10 +652,10 @@ ASSISTANT: `
 
     _addEntry(container, template) {
         const id = ++this.entryIdCounter;
-        const type = (template && template.type) || 'jailbreak';
-        const name = (template && template.name) || '';
-        const content = (template && template.content) || '';
-        const comment = (template && template.comment) || '';
+        const typeDefault = (template && template.type) || 'jailbreak';
+        const nameDefault = (template && template.name) || '';
+        const contentDefault = (template && template.content) || '';
+        const commentDefault = (template && template.comment) || '';
         const enabled = template ? (template.enabled !== false) : true;
 
         const entryDiv = document.createElement('div');
@@ -663,14 +663,14 @@ ASSISTANT: `
         entryDiv.dataset.entryId = id;
 
         const typeOptions = Object.entries(this.ENTRY_TYPES).map(([value, label]) =>
-            `<option value="${value}" ${value === type ? 'selected' : ''}>${label}</option>`
+            `<option value="${value}" ${value === typeDefault ? 'selected' : ''}>${label}</option>`
         ).join('');
 
         entryDiv.innerHTML = `
             <div class="entry-card-header">
-                <h4>${name || '条目 #' + id}</h4>
+                <h4>${commentDefault || nameDefault || '条目 #' + id}</h4>
                 <div>
-                    <button class="btn btn-small btn-secondary pj-toggle-btn">收起</button>
+                    <button class="btn btn-small btn-secondary pj-toggle-btn">展开</button>
                     <button class="btn btn-small btn-danger pj-remove-btn">删除</button>
                 </div>
             </div>
@@ -678,10 +678,10 @@ ASSISTANT: `
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">条目名称</label>
-                        <input type="text" class="form-input pj-entry-name" value="${escapeHTML(name)}" placeholder="输入一个能识别该条目的名称">
+                        <input type="text" class="form-input pj-entry-name" value="${escapeHTML(nameDefault)}" placeholder="输入一个能识别该条目的名称">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">条目类型</label>
+                        <label class="form-label">提示词定位</label>
                         <select class="form-select pj-entry-type">
                             ${typeOptions}
                         </select>
@@ -689,16 +689,56 @@ ASSISTANT: `
                 </div>
                 <div class="form-group">
                     <label class="form-label">备注</label>
-                    <input type="text" class="form-input pj-entry-comment" value="${escapeHTML(comment)}" placeholder="条目备注说明...">
+                    <input type="text" class="form-input pj-entry-comment" value="${escapeHTML(commentDefault)}" placeholder="条目备注（会显示在标题栏）">
                 </div>
                 <div class="form-group">
                     <label class="form-label">内容</label>
-                    <textarea class="form-textarea pj-entry-content" rows="10" placeholder="在此输入提示词内容...">${escapeHTML(content)}</textarea>
+                    <textarea class="form-textarea pj-entry-content" rows="8" placeholder="在此输入提示词内容...">${escapeHTML(contentDefault)}</textarea>
                 </div>
-                <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;">
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label class="form-label">适用模型</label>
+                        <input type="text" class="form-input pj-entry-model" value="${escapeHTML(template?.model || '')}" placeholder="DeepSeek, Claude, GPT...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">插入优先级</label>
+                        <input type="number" class="form-input pj-entry-order" value="${template?.order || 100}" min="1" max="9999">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">权重</label>
+                        <input type="number" class="form-input pj-entry-weight" value="${template?.weight || 100}" min="0" max="100">
+                    </div>
+                </div>
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label class="form-label">分组</label>
+                        <input type="text" class="form-input pj-entry-group" value="${escapeHTML(template?.group || '')}" placeholder="同组条目互斥">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">组权重</label>
+                        <input type="number" class="form-input pj-entry-group-weight" value="${template?.group_weight || 100}" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">适用后端</label>
+                        <input type="text" class="form-input pj-entry-backend" value="${escapeHTML(template?.backend || '')}" placeholder="Text Completion, Chat Completion, 通用">
+                    </div>
+                </div>
+                <div style="display:flex;gap:16px;flex-wrap:wrap;">
                     <div class="form-checkbox-group">
                         <input type="checkbox" class="pj-entry-enabled" ${enabled ? 'checked' : ''}>
-                        <label>启用（导入时包含此条目）</label>
+                        <label>启用</label>
+                    </div>
+                    <div class="form-checkbox-group">
+                        <input type="checkbox" class="pj-entry-constant" ${template?.constant ? 'checked' : ''}>
+                        <label>始终生效</label>
+                    </div>
+                    <div class="form-checkbox-group">
+                        <input type="checkbox" class="pj-entry-override" ${template?.override ? 'checked' : ''}>
+                        <label>覆盖角色卡预设</label>
+                    </div>
+                    <div class="form-checkbox-group">
+                        <input type="checkbox" class="pj-entry-macro-enabled" ${template?.macro_enabled !== false ? 'checked' : ''}>
+                        <label>启用变量替换</label>
                     </div>
                 </div>
             </div>
@@ -715,8 +755,14 @@ ASSISTANT: `
             this.textContent = isCollapsed ? '收起' : '展开';
         });
 
+        entryDiv.querySelector('.pj-entry-comment').addEventListener('input', function () {
+            const name = entryDiv.querySelector('.pj-entry-name').value;
+            entryDiv.querySelector('h4').textContent = this.value || name || ('条目 #' + id);
+        });
+
         entryDiv.querySelector('.pj-entry-name').addEventListener('input', function () {
-            entryDiv.querySelector('h4').textContent = this.value || ('条目 #' + id);
+            const comment = entryDiv.querySelector('.pj-entry-comment').value;
+            entryDiv.querySelector('h4').textContent = comment || this.value || ('条目 #' + id);
         });
 
         container.appendChild(entryDiv);
@@ -733,7 +779,16 @@ ASSISTANT: `
                 name: card.querySelector('.pj-entry-name')?.value || '',
                 content: card.querySelector('.pj-entry-content')?.value || '',
                 comment: card.querySelector('.pj-entry-comment')?.value || '',
-                enabled: card.querySelector('.pj-entry-enabled')?.checked ?? true
+                model: card.querySelector('.pj-entry-model')?.value || '',
+                order: parseInt(card.querySelector('.pj-entry-order')?.value) || 100,
+                weight: parseInt(card.querySelector('.pj-entry-weight')?.value) || 100,
+                group: card.querySelector('.pj-entry-group')?.value || '',
+                group_weight: parseInt(card.querySelector('.pj-entry-group-weight')?.value) || 100,
+                backend: card.querySelector('.pj-entry-backend')?.value || '',
+                enabled: card.querySelector('.pj-entry-enabled')?.checked ?? true,
+                constant: card.querySelector('.pj-entry-constant')?.checked ?? false,
+                override: card.querySelector('.pj-entry-override')?.checked ?? false,
+                macro_enabled: card.querySelector('.pj-entry-macro-enabled')?.checked ?? true
             };
         });
         return entries;
