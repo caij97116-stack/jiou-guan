@@ -701,26 +701,12 @@ ASSISTANT: `
                         <input type="text" class="form-input pj-entry-model" value="${escapeHTML(template?.model || '')}" placeholder="DeepSeek, Claude, GPT...">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">插入优先级</label>
+                        <label class="form-label">优先级</label>
                         <input type="number" class="form-input pj-entry-order" value="${template?.order || 100}" min="1" max="9999">
                     </div>
                     <div class="form-group">
                         <label class="form-label">权重</label>
                         <input type="number" class="form-input pj-entry-weight" value="${template?.weight || 100}" min="0" max="100">
-                    </div>
-                </div>
-                <div class="form-row-3">
-                    <div class="form-group">
-                        <label class="form-label">分组</label>
-                        <input type="text" class="form-input pj-entry-group" value="${escapeHTML(template?.group || '')}" placeholder="同组条目互斥">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">组权重</label>
-                        <input type="number" class="form-input pj-entry-group-weight" value="${template?.group_weight || 100}" min="1">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">适用后端</label>
-                        <input type="text" class="form-input pj-entry-backend" value="${escapeHTML(template?.backend || '')}" placeholder="Text Completion, Chat Completion, 通用">
                     </div>
                 </div>
                 <div style="display:flex;gap:16px;flex-wrap:wrap;">
@@ -731,10 +717,6 @@ ASSISTANT: `
                     <div class="form-checkbox-group">
                         <input type="checkbox" class="pj-entry-constant" ${template?.constant ? 'checked' : ''}>
                         <label>始终生效</label>
-                    </div>
-                    <div class="form-checkbox-group">
-                        <input type="checkbox" class="pj-entry-override" ${template?.override ? 'checked' : ''}>
-                        <label>覆盖角色卡预设</label>
                     </div>
                     <div class="form-checkbox-group">
                         <input type="checkbox" class="pj-entry-macro-enabled" ${template?.macro_enabled !== false ? 'checked' : ''}>
@@ -782,12 +764,8 @@ ASSISTANT: `
                 model: card.querySelector('.pj-entry-model')?.value || '',
                 order: parseInt(card.querySelector('.pj-entry-order')?.value) || 100,
                 weight: parseInt(card.querySelector('.pj-entry-weight')?.value) || 100,
-                group: card.querySelector('.pj-entry-group')?.value || '',
-                group_weight: parseInt(card.querySelector('.pj-entry-group-weight')?.value) || 100,
-                backend: card.querySelector('.pj-entry-backend')?.value || '',
                 enabled: card.querySelector('.pj-entry-enabled')?.checked ?? true,
                 constant: card.querySelector('.pj-entry-constant')?.checked ?? false,
-                override: card.querySelector('.pj-entry-override')?.checked ?? false,
                 macro_enabled: card.querySelector('.pj-entry-macro-enabled')?.checked ?? true
             };
         });
